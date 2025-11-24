@@ -1,0 +1,37 @@
+#pragma once
+
+#define _STRINGIFY(x) #x
+#define STRINGIFY(x)  _STRINGIFY(x)
+
+#define WR3CK_GETTER(type, name, variable) \
+	inline const type name() { return variable; }
+#define WR3CK_GETTER_CONST(type, name, variable) \
+	inline const type name() const { return variable; }
+#define WR3CK_GETTER_MUT(type, name, variable) \
+	inline type name() { return variable; }    \
+	WR3CK_GETTER_CONST(type, name, variable)
+#define WR3CK_GETTER_CONST_MUT(type, name, variable) \
+	inline type name() const { return variable; }
+
+#define WR3CK_CLEANUP(ptr, freeCode) \
+	if (ptr != nullptr) {            \
+		freeCode;                    \
+		ptr = nullptr;               \
+	}
+
+
+// TODO: Colored print functions.
+#define WR3CK_PRINT(...) printf(__VA_ARGS__)
+#define WR3CK_LOG(...) WR3CK_PRINT(__VA_ARGS__)
+#define WR3CK_LOG_WARNING(...) WR3CK_PRINT(__VA_ARGS__)
+#define WR3CK_LOG_ERROR(...) WR3CK_PRINT(__VA_ARGS__)
+
+#include <WR3CK/core/error.hpp>
+#define WR3CK_ERROR(...) \
+	::WR3CK::Internal::throwError(__FILE__ ":" STRINGIFY(__LINE__) ": " __VA_ARGS__)
+#define WR3CK_ASSERT(condition, ...) \
+	if (!(condition)) [[unlikely]] { \
+		WR3CK_ERROR(__VA_ARGS__);    \
+	}
+#define WR3CK_MESSAGEBOX(caption, msg) \
+	::WR3CK::Internal::messageBox(caption, msg);
