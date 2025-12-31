@@ -2,6 +2,8 @@
 
 #include <cstdio>
 
+#include <type_traits>
+
 #include <map>
 #include <set>
 #include <vector>
@@ -11,3 +13,4 @@
 
 #include <WR3CK/core/opengl.hpp>
 #include <WR3CK/math/math.hpp>
+#include <WR3CK/utility/utility.hpp>
