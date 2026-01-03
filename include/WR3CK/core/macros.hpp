@@ -19,7 +19,11 @@
 		freeCode;                    \
 		ptr = nullptr;               \
 	}
-
+#define WR3CK_CLEANUP_GL(glObject, freeCode) \
+	if (glObject > 0) {                      \
+		freeCode;                            \
+		glObject = 0;                        \
+	}
 
 // TODO: Colored print functions.
 #define WR3CK_DEBUG			   printf("DEBUG @ " __FILE__ ":" STRINGIFY(__LINE__) "\n");
