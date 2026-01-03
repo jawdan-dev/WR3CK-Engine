@@ -133,10 +133,10 @@ inline float* Matrix<t_width, t_height>::operator[](const size_t index) {
 
 template<size_t t_width, size_t t_height>
 const bool Matrix<t_width, t_height>::operator==(const Matrix<t_width, t_height>& other) const {
-	return memcmp(
-			   m_data,
-			   other.m_data,
-			   sizeof(m_data)
-		   ) == 0;
+	return memcmp(m_data, other.m_data, sizeof(m_data)) == 0;
+}
+template<size_t t_width, size_t t_height>
+const bool Matrix<t_width, t_height>::operator<(const Matrix<t_width, t_height>& other) const {
+	return memcmp(m_data, other.m_data, sizeof(m_data)) < 0;
 }
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#define ARG(...)	  __VA_ARGS__
 #define _STRINGIFY(x) #x
 #define STRINGIFY(x)  _STRINGIFY(x)
 
@@ -21,10 +22,11 @@
 
 
 // TODO: Colored print functions.
-#define WR3CK_PRINT(...) printf(__VA_ARGS__)
-#define WR3CK_LOG(...) WR3CK_PRINT(__VA_ARGS__)
+#define WR3CK_DEBUG			   printf("DEBUG @ " __FILE__ ":" STRINGIFY(__LINE__) "\n");
+#define WR3CK_PRINT(...)	   printf(__VA_ARGS__)
+#define WR3CK_LOG(...)		   WR3CK_PRINT(__VA_ARGS__)
 #define WR3CK_LOG_WARNING(...) WR3CK_PRINT(__VA_ARGS__)
-#define WR3CK_LOG_ERROR(...) WR3CK_PRINT(__VA_ARGS__)
+#define WR3CK_LOG_ERROR(...)   WR3CK_PRINT(__VA_ARGS__)
 
 #include <WR3CK/core/error.hpp>
 #define WR3CK_ERROR(...) \

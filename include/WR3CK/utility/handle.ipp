@@ -5,7 +5,7 @@ namespace WR3CK
 {
 template<class T>
 template<typename... Args>
-Handle<T>::Handle(const Args&&... args) :
+Handle<T>::Handle(Args&&... args) :
 	m_referenceCount(new size_t(0)), m_data(new T(args...)) {
 	// TODO: Replace new allocator with some form of Arena perhaps?
 	referenceIncrement();
@@ -30,6 +30,14 @@ template<typename C, typename>
 Handle<T>::operator Handle<C>() const {
 	return *reinterpret_cast<const Handle<C>*>(this);
 }
+template<class T>
+const bool Handle<T>::operator==(const Handle<T>& other) const {
+	return m_data == other.m_data;
+}
+template<class T>
+const bool Handle<T>::operator<(const Handle<T>& other) const {
+	return reinterpret_cast<intptr_t>(m_data) < reinterpret_cast<intptr_t>(other.m_data);
+}
 
 template<class T>
 void Handle<T>::referenceIncrement() {
@@ -47,7 +55,8 @@ void Handle<T>::referenceDecrement() {
 
 	if (*m_referenceCount > 0)
 		return;
-	delete m_referenceCount;
-	delete m_data;
+
+	WR3CK_CLEANUP(m_referenceCount, delete m_referenceCount);
+	WR3CK_CLEANUP(m_data, delete m_data);
 }
 }

@@ -2,6 +2,8 @@
 
 #include <cstdio>
 
+#include <memory>
+#include <cstring>
 #include <type_traits>
 
 #include <map>

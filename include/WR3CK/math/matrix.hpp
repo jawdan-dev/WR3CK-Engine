@@ -39,6 +39,7 @@ public:
 	float* operator[](const size_t index);
 
 	const bool operator==(const Matrix<t_width, t_height>& other) const;
+	const bool operator<(const Matrix<t_width, t_height>& other) const;
 
 private:
 	float m_data[t_width][t_height];

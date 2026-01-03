@@ -7,7 +7,7 @@ template<typename T>
 class Handle {
 public:
 	template<typename... Args>
-	Handle(const Args&&... args);
+	Handle(Args&&... args);
 	Handle(const Handle<T>& other);
 	~Handle();
 
@@ -18,12 +18,13 @@ public:
 	operator Handle<C>();
 	template<typename C, typename = std::enable_if_t<std::is_base_of_v<C, T>>>
 	operator Handle<C>() const;
+	const bool operator ==(const Handle<T>& other) const;
+	const bool operator <(const Handle<T>& other) const;
 
 private:
 	void referenceIncrement();
 	void referenceDecrement();
 
-private:
 	size_t* m_referenceCount;
 	T* m_data;
 };

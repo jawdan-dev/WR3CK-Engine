@@ -52,6 +52,9 @@ public:
 
 	const Vector<t_size> operator-();
 
+	const bool operator==(const Vector<t_size>& other) const;
+	const bool operator<(const Vector<t_size>& other) const;
+
 private:
 	float m_data[t_size];
 };

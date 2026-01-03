@@ -99,4 +99,23 @@ const Vector<t_size> Vector<t_size>::operator-() {
 	}
 	return result;
 }
+
+template<size_t t_size>
+const bool Vector<t_size>::operator==(const Vector<t_size>& other) const {
+	for (size_t i = 0; i < t_size; i++) {
+		if (m_data[i] != other.m_data[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+template<size_t t_size>
+const bool Vector<t_size>::operator<(const Vector<t_size>& other) const {
+	for (size_t i = 0; i < t_size; i++) {
+		if (m_data[i] != other.m_data[i]) {
+			return m_data[i] < other.m_data[i];
+		}
+	}
+	return false;
+}
 }
