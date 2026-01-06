@@ -1,6 +1,8 @@
 #pragma once
 #include <WR3CK/core/core.hpp>
 
+#include <WR3CK/asset/texture.hpp>
+
 #define RENDERDATA_MAP(x)                        \
 	x(int, GL_INT);                              \
 	x(float, GL_FLOAT);                          \
@@ -15,7 +17,8 @@
 	x(ARG(Math::Matrix<3, 4>), GL_FLOAT_MAT3x4); \
 	x(ARG(Math::Matrix<4, 4>), GL_FLOAT_MAT4);   \
 	x(ARG(Math::Matrix<4, 2>), GL_FLOAT_MAT4x2); \
-	x(double, GL_DOUBLE);
+	x(double, GL_DOUBLE);                        \
+	x(Texture, GL_SAMPLER_2D);
 
 namespace WR3CK::Internal
 {
