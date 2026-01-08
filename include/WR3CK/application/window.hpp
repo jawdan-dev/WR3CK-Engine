@@ -12,7 +12,7 @@ public:
 	Window(const char* title);
 	Window(const char* title, const int width, const int height);
 	Window(const Window& other) = delete;
-	~Window();
+	virtual ~Window();
 
 	WR3CK_GETTER_CONST(int, width, m_width);
 	WR3CK_GETTER_CONST(int, height, m_height);
