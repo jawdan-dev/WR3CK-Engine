@@ -31,6 +31,13 @@ Handle<T>::operator Handle<C>() const {
 	return *reinterpret_cast<const Handle<C>*>(this);
 }
 template<class T>
+Handle<T>& Handle<T>::operator=(const Handle<T>& other) {
+	referenceDecrement();
+	m_referenceCount = other.m_referenceCount;
+	m_data = other.m_data;
+	referenceIncrement();
+}
+template<class T>
 const bool Handle<T>::operator==(const Handle<T>& other) const {
 	return m_data == other.m_data;
 }
