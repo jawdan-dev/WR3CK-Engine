@@ -33,16 +33,30 @@ public:
 	RenderData(const RenderData& other);
 	~RenderData();
 
-	WR3CK_GETTER_CONST(void*, data, m_data);
 	WR3CK_GETTER_CONST(size_t, dataCount, m_dataCount);
 	WR3CK_GETTER_CONST(GLenum, glType, m_glType);
 
+	const void* data() const;
+	const size_t dataSize() const;
+
+	RenderData& operator=(const RenderData& other);
+#define RENDERDATA_ASSIGN(type, glType)       \
+	RenderData& operator=(const type& value); \
+	RenderData& operator=(const std::vector<type>& value);
+	RENDERDATA_MAP(RENDERDATA_ASSIGN);
+#undef RENDERDATA_ASSIGN
 	const bool operator==(const RenderData& other) const;
 	const bool operator<(const RenderData& other) const;
 
 private:
-	void* m_data;
+	void* getData();
+	void freeData();
+
 	size_t m_dataCount;
+	union {
+		void* m_allocatedData;
+		uint8_t m_stackData[sizeof(Vector4)];
+	};
 	GLenum m_glType;
 };
 }

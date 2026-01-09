@@ -15,14 +15,19 @@ void RendererData::draw(const Mesh& mesh, const Shader& shader, const RenderUnif
 	draw(mesh, shader, RenderInstance(), uniformBuffer);
 }
 void RendererData::draw(const Mesh& mesh, const Shader& shader, const RenderInstance& instance, const RenderUniformBuffer& uniformBuffer) {
-	const std::tuple<Shader, Mesh, RenderUniformBuffer> key =
-		std::make_tuple(shader, mesh, uniformBuffer);
+	const std::pair<Shader, Mesh> key(shader, mesh);
 
-	auto it = m_renderInstances.find(key);
-	if (it == m_renderInstances.end()) {
-		const auto emplaceResult = m_renderInstances.emplace(
+	auto shaderMeshIt = m_renderInstances.find(key);
+	if (shaderMeshIt == m_renderInstances.end()) {
+		const auto emplaceResult = m_renderInstances.emplace(key, std::map<RenderUniformBuffer, Internal::RenderGroup>());
+		shaderMeshIt = emplaceResult.first;
+	}
+
+	auto it = shaderMeshIt->second.find(uniformBuffer);
+	if (it == shaderMeshIt->second.end()) {
+		const auto emplaceResult = shaderMeshIt->second.emplace(
 			std::piecewise_construct,
-			std::forward_as_tuple(key),
+			std::forward_as_tuple(uniformBuffer),
 			std::forward_as_tuple(shader, mesh)
 		);
 		it = emplaceResult.first;
@@ -33,13 +38,11 @@ void RendererData::draw(const Mesh& mesh, const Shader& shader, const RenderInst
 void RendererData::render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	for (auto& it : m_renderInstances) {
-		const Shader shaderHandle = std::get<0>(it.first);
+	for (auto& shaderMeshIt : m_renderInstances) {
+		const Shader shaderHandle = shaderMeshIt.first.first;
 		const ShaderData& shader = shaderHandle.get();
-		const RenderUniformBuffer& uniformBuffer = std::get<2>(it.first);
 
 		glUseProgram(shader.program());
-		uniformBuffer.bindAll(shader);
 
 		auto viewMatrixIt = shader.uniforms().find("u_viewProjection");
 		if (viewMatrixIt != shader.uniforms().end()) {
@@ -49,21 +52,36 @@ void RendererData::render() {
 			);
 		}
 
-		it.second.draw();
+		for (auto& it : shaderMeshIt.second) {
+			const RenderUniformBuffer& uniformBuffer = it.first;
+
+			// TODO: Add in-built variable protection. Uniform buffer will probably solve that!
+			uniformBuffer.bindAll(shader);
+
+			it.second.draw();
+		}
 	}
 
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
 void RendererData::clear() {
-	auto it = m_renderInstances.begin();
-	while (it != m_renderInstances.end()) {
-		if (it->second.instanceCount() <= 0) {
-			it = m_renderInstances.erase(it);
+	auto shaderMeshIt = m_renderInstances.begin();
+	while (shaderMeshIt != m_renderInstances.end()) {
+		auto it = shaderMeshIt->second.begin();
+		while (it != shaderMeshIt->second.end()) {
+			if (it->second.instanceCount() <= 0) {
+				it = shaderMeshIt->second.erase(it);
+				continue;
+			}
+			it->second.clear();
+			it++;
+		}
+		if (shaderMeshIt->second.size() <= 0) {
+			shaderMeshIt = m_renderInstances.erase(shaderMeshIt);
 			continue;
 		}
-		it->second.clear();
-		it++;
+		shaderMeshIt++;
 	}
 }
 

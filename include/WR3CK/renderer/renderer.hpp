@@ -24,7 +24,7 @@ public:
 	void clear();
 
 private:
-	std::map<std::tuple<Shader, Mesh, RenderUniformBuffer>, Internal::RenderGroup> m_renderInstances;
+	std::map<std::pair<Shader, Mesh>, std::map<RenderUniformBuffer, Internal::RenderGroup>> m_renderInstances;
 	Matrix4 m_viewProjection;
 };
 typedef AssetHandle<RendererData> Renderer;
