@@ -90,14 +90,43 @@ void RenderGroup::setupVao() {
 		const bool isStatic = it.second.m_isStatic;
 		glBindBuffer(GL_ARRAY_BUFFER, isStatic ? mesh.vbo() : m_ivbo);
 
-		glVertexAttribPointer(
-			it.second.m_location,
-			Internal::GL::getTypeElementCount(it.second.m_glType),
-			Internal::GL::getTypeBase(it.second.m_glType),
-			GL_FALSE,
-			isStatic ? mesh.dataStride() : shader.attributeInstanceTotalSize(),
-			(void*)(isStatic ? mesh.getAttributeOffset(it.first) : it.second.m_dataOffset)
-		);
+		switch (Internal::GL::getTypeBase(it.second.m_glType)) {
+			default:
+				glVertexAttribPointer(
+					it.second.m_location,
+					Internal::GL::getTypeElementCount(it.second.m_glType),
+					Internal::GL::getTypeBase(it.second.m_glType),
+					GL_FALSE,
+					isStatic ? mesh.dataStride() : shader.attributeInstanceTotalSize(),
+					(void*)(isStatic ? mesh.getAttributeOffset(it.first) : it.second.m_dataOffset)
+				);
+				break;
+
+			case GL_BYTE:
+			case GL_UNSIGNED_BYTE:
+			case GL_SHORT:
+			case GL_UNSIGNED_SHORT:
+			case GL_INT:
+			case GL_UNSIGNED_INT:
+				glVertexAttribIPointer(
+					it.second.m_location,
+					Internal::GL::getTypeElementCount(it.second.m_glType),
+					Internal::GL::getTypeBase(it.second.m_glType),
+					isStatic ? mesh.dataStride() : shader.attributeInstanceTotalSize(),
+					(void*)(isStatic ? mesh.getAttributeOffset(it.first) : it.second.m_dataOffset)
+				);
+				break;
+
+			case GL_DOUBLE:
+				glVertexAttribLPointer(
+					it.second.m_location,
+					Internal::GL::getTypeElementCount(it.second.m_glType),
+					Internal::GL::getTypeBase(it.second.m_glType),
+					isStatic ? mesh.dataStride() : shader.attributeInstanceTotalSize(),
+					(void*)(isStatic ? mesh.getAttributeOffset(it.first) : it.second.m_dataOffset)
+				);
+				break;
+		}
 		glVertexAttribDivisor(it.second.m_location, isStatic ? 0 : 1);
 		glEnableVertexAttribArray(it.second.m_location);
 	}

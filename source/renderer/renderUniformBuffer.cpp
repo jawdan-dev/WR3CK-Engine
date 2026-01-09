@@ -14,6 +14,12 @@ void RenderUniformBuffer::bindAll(const ShaderData& shader) const {
 
 		const void* const data = it.second.data();
 		switch (it.second.glType()) {
+			case GL_INT:
+				glUniform1i(uniformData.m_location, *(int*)data);
+				break;
+			case GL_UNSIGNED_INT:
+				glUniform1i(uniformData.m_location, *(unsigned int*)data);
+				break;
 			case GL_FLOAT:
 				glUniform1f(uniformData.m_location, *(float*)data);
 				break;
@@ -34,7 +40,7 @@ void RenderUniformBuffer::bindAll(const ShaderData& shader) const {
 			} break;
 
 			default:
-				WR3CK_ERROR("Unsupported uniform type");
+				WR3CK_ERROR("Unsupported uniform type \"0x%x\".", it.second.glType());
 				break;
 		}
 	}

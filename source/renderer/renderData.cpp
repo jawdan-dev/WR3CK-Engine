@@ -2,6 +2,7 @@
 
 #define RENDERDATA_MAP(x)                        \
 	x(int, GL_INT);                              \
+	x(unsigned int, GL_UNSIGNED_INT);            \
 	x(float, GL_FLOAT);                          \
 	x(Vector2, GL_FLOAT_VEC2);                   \
 	x(Vector3, GL_FLOAT_VEC3);                   \
