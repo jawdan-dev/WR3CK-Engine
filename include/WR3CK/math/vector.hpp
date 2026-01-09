@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <type_traits>
-#include <algorithm>
 
 namespace WR3CK::Math
 {

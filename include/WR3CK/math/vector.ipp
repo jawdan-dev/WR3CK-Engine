@@ -34,7 +34,7 @@ const float Vector<t_size>::lengthSquared() const {
 }
 template<size_t t_size>
 const float Vector<t_size>::length() const {
-	return sqrtf(lengthSquared);
+	return sqrtf(lengthSquared());
 }
 template<size_t t_size>
 const Vector<t_size> Vector<t_size>::normal() const {

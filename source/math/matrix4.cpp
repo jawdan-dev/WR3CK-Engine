@@ -1,5 +1,7 @@
 #include <WR3CK/math/matrix4.hpp>
 
+#include <memory>
+
 namespace WR3CK
 {
 Matrix4::Matrix4(const Matrix<4, 4>& other) {
@@ -122,8 +124,8 @@ const Matrix4 Matrix4::lookAt(
 }
 
 const Vector3 operator*(const Matrix4& mat, const Vector3& vec) {
-	Matrix<1, 4> vecMat(vec.x(), vec.y(), vec.z(), 1);
-	Matrix res = mat * vecMat;
+	Math::Matrix<1, 4> vecMat(vec.x(), vec.y(), vec.z(), 1);
+	Math::Matrix res = mat * vecMat;
 	return Vector3(res.data()[0], res.data()[1], res.data()[2]);
 }
 }
