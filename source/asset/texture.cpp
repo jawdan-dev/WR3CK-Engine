@@ -7,8 +7,6 @@ TextureData::TextureData(const uint32_t width, const uint32_t height) :
 	m_width(0), m_height(0),
 	m_textureHandle(0), m_textureId(0),
 	m_modified(false) {
-	if (width <= 0 || height <= 0)
-		return;
 	resize(width, height);
 }
 TextureData::~TextureData() {
@@ -16,6 +14,7 @@ TextureData::~TextureData() {
 	WR3CK_CLEANUP_GL(m_textureId, glDeleteTextures(1, &m_textureId); m_textureHandle = 0);
 	m_width = 0;
 	m_height = 0;
+	m_modified = false;
 }
 
 const uint32_t TextureData::getPixel(const uint32_t x, const uint32_t y) const {
@@ -39,7 +38,6 @@ void TextureData::resize(const uint32_t _width, const uint32_t _height) {
 
 	if (width == 0 || height == 0) {
 		TextureData::~TextureData();
-		m_modified = false;
 		return;
 	}
 
