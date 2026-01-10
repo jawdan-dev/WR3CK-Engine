@@ -8,6 +8,7 @@ class Handle {
 public:
 	template<typename... Args>
 	Handle(Args&&... args);
+	Handle(Handle<T>& other);
 	Handle(const Handle<T>& other);
 	~Handle();
 
@@ -18,9 +19,9 @@ public:
 	operator Handle<C>();
 	template<typename C, typename = std::enable_if_t<std::is_base_of_v<C, T>>>
 	operator Handle<C>() const;
-	Handle<T>& operator =(const Handle<T>& other);
-	const bool operator ==(const Handle<T>& other) const;
-	const bool operator <(const Handle<T>& other) const;
+	Handle<T>& operator=(const Handle<T>& other);
+	const bool operator==(const Handle<T>& other) const;
+	const bool operator<(const Handle<T>& other) const;
 
 private:
 	void referenceIncrement();

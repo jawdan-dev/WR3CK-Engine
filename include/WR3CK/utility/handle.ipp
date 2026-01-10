@@ -11,6 +11,11 @@ Handle<T>::Handle(Args&&... args) :
 	referenceIncrement();
 }
 template<class T>
+Handle<T>::Handle(Handle<T>& other) :
+	m_referenceCount(other.m_referenceCount), m_data(other.m_data) {
+	referenceIncrement();
+}
+template<class T>
 Handle<T>::Handle(const Handle<T>& other) :
 	m_referenceCount(other.m_referenceCount), m_data(other.m_data) {
 	referenceIncrement();
@@ -36,6 +41,7 @@ Handle<T>& Handle<T>::operator=(const Handle<T>& other) {
 	m_referenceCount = other.m_referenceCount;
 	m_data = other.m_data;
 	referenceIncrement();
+	return *this;
 }
 template<class T>
 const bool Handle<T>::operator==(const Handle<T>& other) const {
