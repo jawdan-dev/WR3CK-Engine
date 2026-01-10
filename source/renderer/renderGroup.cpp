@@ -2,26 +2,27 @@
 
 namespace WR3CK::Internal
 {
-RenderGroup::RenderGroup(const Shader& shader, const Mesh& mesh) :
+RenderGroupData::RenderGroupData(const Shader& shader, const Mesh& mesh) :
 	m_shader(shader), m_mesh(mesh),
 	m_instanceData(nullptr),
 	m_instanceCount(0), m_instanceCapacity(0),
+	m_staticInstances(), m_staticCounter(0),
 	m_vao(0), m_ivbo(0),
 	m_modified(false) {
 	setupVao();
 }
-RenderGroup::~RenderGroup() {
+RenderGroupData::~RenderGroupData() {
 	WR3CK_CLEANUP(m_instanceData, free(m_instanceData));
 	WR3CK_CLEANUP_GL(m_vao, glDeleteVertexArrays(1, &m_vao));
 	WR3CK_CLEANUP_GL(m_ivbo, glDeleteBuffers(1, &m_ivbo));
 }
 
-void RenderGroup::addInstance(const RenderInstance& instanceData) {
+void RenderGroupData::addInstance(const RenderInstance& instanceData) {
 	const ShaderData& shader = m_shader.get();
 	if (shader.attributeInstanceTotalSize() <= 0)
 		return;
-	resize(m_instanceCount + 1);
 
+	void* const data = insertInstance(m_instanceCount);
 	const auto& attributes = shader.attributes();
 	for (auto it : instanceData.data()) {
 		auto attribute = attributes.find(it.first);
@@ -29,11 +30,29 @@ void RenderGroup::addInstance(const RenderInstance& instanceData) {
 			continue;
 
 		const size_t dataSize = Internal::GL::getTypeByteSize(it.second.glType());
-		void* const dataTarget = reinterpret_cast<void*>(
-			reinterpret_cast<intptr_t>(m_instanceData) +
-			(m_instanceCount * shader.attributeInstanceTotalSize()) +
-			attribute->second.m_dataOffset
-		);
+		void* const dataTarget = reinterpret_cast<void*>(reinterpret_cast<intptr_t>(data) + attribute->second.m_dataOffset);
+
+		if (memcmp(dataTarget, it.second.data(), dataSize) == 0)
+			continue;
+		memcpy(dataTarget, it.second.data(), dataSize);
+
+		m_modified = true;
+	}
+}
+const RenderGroupData::statickey_t RenderGroupData::addStaticInstance(const StaticRenderInstance& instanceData) {
+	const ShaderData& shader = m_shader.get();
+	WR3CK_ASSERT(shader.attributeInstanceTotalSize() > 0);
+
+	const size_t staticIndex = m_staticInstances.size();
+	void* const data = insertInstance(staticIndex);
+	const auto& attributes = shader.attributes();
+	for (auto it : instanceData.data()) {
+		auto attribute = attributes.find(it.first);
+		if (attribute == attributes.end() || attribute->second.m_isStatic || attribute->second.m_glType != it.second.glType())
+			continue;
+
+		const size_t dataSize = Internal::GL::getTypeByteSize(it.second.glType());
+		void* const dataTarget = reinterpret_cast<void*>(reinterpret_cast<intptr_t>(data) + attribute->second.m_dataOffset);
 
 		if (memcmp(dataTarget, it.second.data(), dataSize) == 0)
 			continue;
@@ -42,9 +61,60 @@ void RenderGroup::addInstance(const RenderInstance& instanceData) {
 		m_modified = true;
 	}
 
-	m_instanceCount++;
+	statickey_t staticKey = m_staticCounter++;
+	while (m_staticInstances.find(staticKey) != m_staticInstances.end())
+		staticKey = m_staticCounter++;
+	m_staticInstances.emplace(staticKey, staticIndex);
+
+	return staticKey;
 }
-void RenderGroup::draw() {
+void RenderGroupData::updateStaticInstance(const statickey_t staticKey, const StaticRenderInstance& instanceData) {
+	const ShaderData& shader = m_shader.get();
+	if (shader.attributeInstanceTotalSize() <= 0)
+		return;
+
+	auto it = m_staticInstances.find(staticKey);
+	if (it == m_staticInstances.end()) {
+		WR3CK_LOG_WARNING("Failed to find static StaticRenderIstance \"%u\" in RenderGroup.", staticKey);
+		return;
+	}
+	const size_t staticIndex = it->second;
+
+	void* const data = getInstance(staticIndex);
+	const auto& attributes = shader.attributes();
+	for (auto it : instanceData.data()) {
+		auto attribute = attributes.find(it.first);
+		if (attribute == attributes.end() || attribute->second.m_isStatic || attribute->second.m_glType != it.second.glType())
+			continue;
+
+		const size_t dataSize = Internal::GL::getTypeByteSize(it.second.glType());
+		void* const dataTarget = reinterpret_cast<void*>(reinterpret_cast<intptr_t>(data) + attribute->second.m_dataOffset);
+
+		if (memcmp(dataTarget, it.second.data(), dataSize) == 0)
+			continue;
+		memcpy(dataTarget, it.second.data(), dataSize);
+
+		m_modified = true;
+	}
+}
+void RenderGroupData::removeStaticInstance(const statickey_t staticKey) {
+	auto it = m_staticInstances.find(staticKey);
+	if (it == m_staticInstances.end()) {
+		WR3CK_LOG_WARNING("Failed to find static StaticRenderIstance \"%u\" in RenderGroup.", staticKey);
+		return;
+	}
+	const size_t removeIndex = it->second;
+	removeInstance(removeIndex);
+
+	m_staticInstances.erase(it);
+	for (auto& it : m_staticInstances) {
+		if (it.second <= removeIndex)
+			continue;
+		it.second--;
+	}
+}
+
+void RenderGroupData::render() {
 	const ShaderData& shader = m_shader.get();
 	const MeshData& mesh = m_mesh.get();
 
@@ -74,11 +144,11 @@ void RenderGroup::draw() {
 		glDrawArrays(GL_TRIANGLES, 0, mesh.drawCount());
 	}
 }
-void RenderGroup::clear() {
-	m_instanceCount = 0;
+void RenderGroupData::clear() {
+	m_instanceCount = m_staticInstances.size();
 }
 
-void RenderGroup::setupVao() {
+void RenderGroupData::setupVao() {
 	glGenBuffers(1, &m_ivbo);
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
@@ -135,7 +205,7 @@ void RenderGroup::setupVao() {
 
 	glBindVertexArray(0);
 }
-void RenderGroup::resize(const size_t size) {
+void RenderGroupData::resize(const size_t size) {
 	if (size <= m_instanceCapacity)
 		return;
 
@@ -148,5 +218,45 @@ void RenderGroup::resize(const size_t size) {
 	void* temp = realloc(m_instanceData, m_instanceCapacity * shader.attributeInstanceTotalSize());
 	WR3CK_ASSERT(temp != nullptr, "Failed to resize RenderGroup buffer.");
 	m_instanceData = temp;
+}
+void* RenderGroupData::getInstance(const size_t index) {
+	WR3CK_ASSERT(index < m_instanceCapacity);
+	return reinterpret_cast<void*>(
+		reinterpret_cast<intptr_t>(m_instanceData) +
+		(index * m_shader.get().attributeInstanceTotalSize())
+	);
+}
+void RenderGroupData::removeInstance(const size_t _index) {
+	WR3CK_ASSERT(_index < m_instanceCount);
+	const size_t index = __min(m_instanceCount, _index + 1);
+	const size_t moveCount = m_instanceCount - index;
+
+	if (moveCount > 0) {
+		memmove(
+			getInstance(index - 1),
+			getInstance(index),
+			moveCount * m_shader.get().attributeInstanceTotalSize()
+		);
+		m_modified = true;
+	}
+
+	m_instanceCount--;
+}
+void* RenderGroupData::insertInstance(const size_t _index) {
+	const size_t index = __min(m_instanceCount, _index);
+	resize(m_instanceCount + 1);
+
+	const size_t moveCount = m_instanceCount - index;
+	if (moveCount > 0) {
+		memmove(
+			getInstance(index + 1),
+			getInstance(index),
+			moveCount * m_shader.get().attributeInstanceTotalSize()
+		);
+		m_modified = true;
+	}
+
+	m_instanceCount++;
+	return getInstance(index);
 }
 }
