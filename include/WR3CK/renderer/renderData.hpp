@@ -19,7 +19,7 @@
 	x(ARG(Math::Matrix<4, 4>), GL_FLOAT_MAT4);   \
 	x(ARG(Math::Matrix<4, 2>), GL_FLOAT_MAT4x2); \
 	x(double, GL_DOUBLE);                        \
-	x(Texture, GL_SAMPLER_2D);
+	x(TextureHandle, GL_SAMPLER_2D);
 
 namespace WR3CK::Internal
 {

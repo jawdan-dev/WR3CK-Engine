@@ -6,18 +6,18 @@
 
 namespace WR3CK
 {
-class StaticRenderObjectData : public AssetData {
+class StaticRenderObjectData : public AssetBaseData {
 public:
-	StaticRenderObjectData(const Internal::RenderGroup& renderGroup, const Internal::RenderGroupData::statickey_t staticKey);
+	StaticRenderObjectData(const Internal::RenderGroupHandle& renderGroupHandle, const Internal::RenderGroupData::statickey_t staticKey);
 	StaticRenderObjectData(const StaticRenderObjectData& other) = delete;
 	~StaticRenderObjectData();
 
-	WR3CK_GETTER_CONST(Internal::RenderGroup&, renderGroup, m_renderGroup);
+	WR3CK_GETTER_CONST(Internal::RenderGroupHandle&, renderGroup, m_renderGroupHandle);
 	WR3CK_GETTER_CONST(Internal::RenderGroupData::statickey_t, staticKey, m_staticKey);
 
 private:
-	Internal::RenderGroup m_renderGroup;
+	Internal::RenderGroupHandle m_renderGroupHandle;
 	Internal::RenderGroupData::statickey_t m_staticKey;
 };
-typedef AssetHandle<StaticRenderObjectData> StaticRenderObject;
+typedef AssetHandle<StaticRenderObjectData> StaticRenderObjectHandle;
 }

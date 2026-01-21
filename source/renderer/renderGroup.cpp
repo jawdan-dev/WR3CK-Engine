@@ -2,8 +2,8 @@
 
 namespace WR3CK::Internal
 {
-RenderGroupData::RenderGroupData(const Shader& shader, const Mesh& mesh) :
-	m_shader(shader), m_mesh(mesh),
+RenderGroupData::RenderGroupData(const ShaderHandle& shaderHandle, const MeshHandle& meshHandle) :
+	m_shaderHandle(shaderHandle), m_meshHandle(meshHandle),
 	m_instanceData(nullptr),
 	m_instanceCount(0), m_instanceCapacity(0),
 	m_staticInstances(), m_staticCounter(0),
@@ -18,7 +18,7 @@ RenderGroupData::~RenderGroupData() {
 }
 
 void RenderGroupData::addInstance(const RenderInstance& instanceData) {
-	const ShaderData& shader = m_shader.get();
+	const ShaderData& shader = m_shaderHandle.get();
 	if (shader.attributeInstanceTotalSize() <= 0)
 		return;
 
@@ -40,7 +40,7 @@ void RenderGroupData::addInstance(const RenderInstance& instanceData) {
 	}
 }
 const RenderGroupData::statickey_t RenderGroupData::addStaticInstance(const StaticRenderInstance& instanceData) {
-	const ShaderData& shader = m_shader.get();
+	const ShaderData& shader = m_shaderHandle.get();
 	WR3CK_ASSERT(shader.attributeInstanceTotalSize() > 0);
 
 	const size_t staticIndex = m_staticInstances.size();
@@ -69,7 +69,7 @@ const RenderGroupData::statickey_t RenderGroupData::addStaticInstance(const Stat
 	return staticKey;
 }
 void RenderGroupData::updateStaticInstance(const statickey_t staticKey, const StaticRenderInstance& instanceData) {
-	const ShaderData& shader = m_shader.get();
+	const ShaderData& shader = m_shaderHandle.get();
 	if (shader.attributeInstanceTotalSize() <= 0)
 		return;
 
@@ -115,8 +115,8 @@ void RenderGroupData::removeStaticInstance(const statickey_t staticKey) {
 }
 
 void RenderGroupData::render() {
-	const ShaderData& shader = m_shader.get();
-	const MeshData& mesh = m_mesh.get();
+	const ShaderData& shader = m_shaderHandle.get();
+	const MeshData& mesh = m_meshHandle.get();
 
 	if (m_modified) {
 		// TODO: Named functions?
@@ -153,8 +153,8 @@ void RenderGroupData::setupVao() {
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
 
-	const ShaderData& shader = m_shader.get();
-	const MeshData& mesh = m_mesh.get();
+	const ShaderData& shader = m_shaderHandle.get();
+	const MeshData& mesh = m_meshHandle.get();
 
 	for (auto it : shader.attributes()) {
 		const bool isStatic = it.second.m_isStatic;
@@ -214,7 +214,7 @@ void RenderGroupData::resize(const size_t size) {
 	while (m_instanceCapacity < size)
 		m_instanceCapacity *= 2;
 
-	const ShaderData& shader = m_shader.get();
+	const ShaderData& shader = m_shaderHandle.get();
 	void* temp = realloc(m_instanceData, m_instanceCapacity * shader.attributeInstanceTotalSize());
 	WR3CK_ASSERT(temp != nullptr, "Failed to resize RenderGroup buffer.");
 	m_instanceData = temp;
@@ -223,7 +223,7 @@ void* RenderGroupData::getInstance(const size_t index) {
 	WR3CK_ASSERT(index < m_instanceCapacity);
 	return reinterpret_cast<void*>(
 		reinterpret_cast<intptr_t>(m_instanceData) +
-		(index * m_shader.get().attributeInstanceTotalSize())
+		(index * m_shaderHandle.get().attributeInstanceTotalSize())
 	);
 }
 void RenderGroupData::removeInstance(const size_t _index) {
@@ -235,7 +235,7 @@ void RenderGroupData::removeInstance(const size_t _index) {
 		memmove(
 			getInstance(index - 1),
 			getInstance(index),
-			moveCount * m_shader.get().attributeInstanceTotalSize()
+			moveCount * m_shaderHandle.get().attributeInstanceTotalSize()
 		);
 		m_modified = true;
 	}
@@ -251,7 +251,7 @@ void* RenderGroupData::insertInstance(const size_t _index) {
 		memmove(
 			getInstance(index + 1),
 			getInstance(index),
-			moveCount * m_shader.get().attributeInstanceTotalSize()
+			moveCount * m_shaderHandle.get().attributeInstanceTotalSize()
 		);
 		m_modified = true;
 	}

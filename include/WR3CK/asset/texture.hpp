@@ -3,7 +3,7 @@
 
 namespace WR3CK
 {
-class TextureData : public AssetData {
+class TextureData : public AssetBaseData {
 public:
 	TextureData(const uint32_t width, const uint32_t height);
 	TextureData(const TextureData& other) = delete;
@@ -30,5 +30,5 @@ private:
 	GLuint m_textureId;
 	bool m_modified;
 };
-typedef AssetHandle<TextureData> Texture;
+typedef AssetHandle<TextureData> TextureHandle;
 }

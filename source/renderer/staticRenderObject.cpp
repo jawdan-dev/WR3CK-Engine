@@ -2,9 +2,9 @@
 
 namespace WR3CK
 {
-StaticRenderObjectData::StaticRenderObjectData(const Internal::RenderGroup& renderGroup, const Internal::RenderGroupData::statickey_t staticKey) :
-	m_renderGroup(renderGroup), m_staticKey(staticKey) {}
+StaticRenderObjectData::StaticRenderObjectData(const Internal::RenderGroupHandle& renderGroupHandle, const Internal::RenderGroupData::statickey_t staticKey) :
+	m_renderGroupHandle(renderGroupHandle), m_staticKey(staticKey) {}
 StaticRenderObjectData::~StaticRenderObjectData() {
-	m_renderGroup.get().removeStaticInstance(m_staticKey);
+	m_renderGroupHandle.get().removeStaticInstance(m_staticKey);
 }
 }

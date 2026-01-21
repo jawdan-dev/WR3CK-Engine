@@ -5,7 +5,7 @@
 
 namespace WR3CK
 {
-class MeshData : public AssetData {
+class MeshData : public AssetBaseData {
 public:
 	typedef uint16_t index_t;
 
@@ -35,7 +35,7 @@ private:
 	GLuint m_vbo, m_ebo;
 	bool m_modified;
 };
-typedef AssetHandle<MeshData> Mesh;
+typedef AssetHandle<MeshData> MeshHandle;
 }
 
 #include "mesh.ipp"

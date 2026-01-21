@@ -9,7 +9,7 @@
 
 namespace WR3CK
 {
-class RendererData : public AssetData {
+class RendererData : public AssetBaseData {
 public:
 	RendererData();
 	RendererData(const RendererData& other) = delete;
@@ -19,18 +19,18 @@ public:
 
 	void setViewProjection(const Matrix4& viewProjection);
 
-	void draw(const Mesh& mesh, const Shader& shader, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
-	void draw(const Mesh& mesh, const Shader& shader, const RenderInstance& instance, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
-	const StaticRenderObject draw(const Mesh& mesh, const Shader& shader, const StaticRenderInstance& instance, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
-	void draw(StaticRenderObject& staticRender, const StaticRenderInstance& instance);
+	void draw(const MeshHandle& meshHandle, const ShaderHandle& shaderHandle, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
+	void draw(const MeshHandle& meshHandle, const ShaderHandle& shaderHandle, const RenderInstance& instance, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
+	const StaticRenderObjectHandle draw(const MeshHandle& meshHandle, const ShaderHandle& shaderHandle, const StaticRenderInstance& instance, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
+	void draw(StaticRenderObjectHandle& staticRenderObjectHandle, const StaticRenderInstance& instance);
 	void render();
 	void clear();
 
 private:
-	Internal::RenderGroup& getRenderGroup(const Mesh& mesh, const Shader& shader, const RenderUniformBuffer& uniformBuffer);
+	Internal::RenderGroupHandle& getRenderGroup(const MeshHandle& meshHandle, const ShaderHandle& shaderHandle, const RenderUniformBuffer& uniformBuffer);
 
-	std::map<std::pair<Shader, Mesh>, std::map<RenderUniformBuffer, Internal::RenderGroup>> m_renderInstances;
+	std::map<std::pair<ShaderHandle, MeshHandle>, std::map<RenderUniformBuffer, Internal::RenderGroupHandle>> m_renderInstances;
 	Matrix4 m_viewProjection;
 };
-typedef AssetHandle<RendererData> Renderer;
+typedef AssetHandle<RendererData> RendererHandle;
 }

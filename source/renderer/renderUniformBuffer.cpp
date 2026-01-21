@@ -34,9 +34,9 @@ void RenderUniformBuffer::bindAll(const ShaderData& shader) const {
 				break;
 
 			case GL_SAMPLER_2D: {
-				const Texture* const textureHandle = reinterpret_cast<const Texture*>(data);
-				const GLuint64 handle = textureHandle->get().handle();
-				glUniformHandleui64ARB(uniformData.m_location, handle);
+				const TextureHandle* const textureHandle = reinterpret_cast<const TextureHandle*>(data);
+				const GLuint64 glTextureHandle = textureHandle->get().handle();
+				glUniformHandleui64ARB(uniformData.m_location, glTextureHandle);
 			} break;
 
 			default:

@@ -6,7 +6,7 @@
 
 namespace WR3CK
 {
-class ShaderData : public AssetData {
+class ShaderData : public AssetBaseData {
 public:
 	ShaderData(const std::string& source);
 	ShaderData(const ShaderData& other) = delete;
@@ -30,5 +30,5 @@ private:
 	size_t m_attributeInstanceTotalSize, m_attributeStaticTotalSize;
 	GLuint m_program;
 };
-typedef AssetHandle<ShaderData> Shader;
+typedef AssetHandle<ShaderData> ShaderHandle;
 }

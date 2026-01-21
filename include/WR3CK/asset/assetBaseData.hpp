@@ -3,8 +3,8 @@
 
 namespace WR3CK
 {
-class AssetData {
+class AssetBaseData {
 public:
-	virtual ~AssetData() = default;
+	virtual ~AssetBaseData() = default;
 };
 }
