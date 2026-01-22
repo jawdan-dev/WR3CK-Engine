@@ -9,9 +9,14 @@ namespace WR3CK
 {
 class WindowData : public FrameBufferData {
 public:
+	struct CreationConfig {
+		std::string m_title = "WR3CK Engine";
+		int m_width = 640,
+			m_height = 360;
+	};
+
 	WindowData();
-	WindowData(const char* title);
-	WindowData(const char* title, const int width, const int height);
+	WindowData(const CreationConfig& config);
 	WindowData(const WindowData& other) = delete;
 	virtual ~WindowData();
 

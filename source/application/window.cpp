@@ -2,10 +2,11 @@
 
 namespace WR3CK
 {
-WindowData::WindowData() : WindowData("WR3CK Engine") {}
-WindowData::WindowData(const char* title) : WindowData(title, 640, 360) {}
-WindowData::WindowData(const char* title, const int width, const int height) :
-	m_windowContext(nullptr) {
+WindowData::WindowData() : WindowData(CreationConfig()) {}
+WindowData::WindowData(const CreationConfig& config) :
+	m_windowContext(nullptr),
+	m_time(), m_input(),
+	m_width(0), m_height(0) {
 	glfwSetErrorCallback([](int errorCode, const char* description) {
 		WR3CK_ERROR("GLFW Error %i: %s", errorCode, description);
 	});
@@ -16,11 +17,11 @@ WindowData::WindowData(const char* title, const int width, const int height) :
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-	m_windowContext = glfwCreateWindow(width, height, title, NULL, NULL);
+	m_windowContext = glfwCreateWindow(config.m_width, config.m_height, config.m_title.c_str(), NULL, NULL);
 	WR3CK_ASSERT(m_windowContext != nullptr, "Failed to initialize GLFW window context.");
 
-	m_width = width;
-	m_height = height;
+	m_width = config.m_width;
+	m_height = config.m_width;
 	glfwMakeContextCurrent(m_windowContext);
 	glfwSetWindowUserPointer(m_windowContext, this);
 
@@ -58,7 +59,9 @@ WindowData::WindowData(const char* title, const int width, const int height) :
 	glfwDefaultWindowHints();
 }
 WindowData::~WindowData() {
-	WR3CK_CLEANUP(m_windowContext, glfwDestroyWindow(m_windowContext))
+	WR3CK_CLEANUP(m_windowContext, glfwDestroyWindow(m_windowContext));
+	m_width = 0;
+	m_height = 0;
 }
 
 const GLuint WindowData::frameBuffer() const {
