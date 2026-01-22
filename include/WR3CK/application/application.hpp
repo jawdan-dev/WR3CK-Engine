@@ -7,18 +7,18 @@ class Application {
 public:
 	Application();
 	Application(const Application& other) = delete;
-	~Application();
+	~Application() = default;
 
-	template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of_v<Window, T>>>
-	T* const addWindow(Args&&... args);
-	Window* const addWindow(Window* window);
+	template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of_v<WindowData, T>>>
+	WindowHandle addWindow(Args&&... args);
+	WindowHandle addWindow(WindowHandle& windowHandle);
 
 	void start();
 
 	static void initializeApplication(Application& app);
 
 private:
-	std::vector<Window*> m_windows;
+	std::vector<WindowHandle> m_windowHandles;
 };
 }
 

@@ -2,9 +2,9 @@
 
 namespace WR3CK
 {
-Window::Window() : Window("WR3CK Engine") {}
-Window::Window(const char* title) : Window(title, 640, 360) {}
-Window::Window(const char* title, const int width, const int height) :
+WindowData::WindowData() : WindowData("WR3CK Engine") {}
+WindowData::WindowData(const char* title) : WindowData(title, 640, 360) {}
+WindowData::WindowData(const char* title, const int width, const int height) :
 	m_windowContext(nullptr) {
 	glfwSetErrorCallback([](int errorCode, const char* description) {
 		WR3CK_ERROR("GLFW Error %i: %s", errorCode, description);
@@ -36,36 +36,40 @@ Window::Window(const char* title, const int width, const int height) :
 	glFrontFace(GL_CW);
 
 	glfwSetWindowSizeCallback(m_windowContext, [](GLFWwindow* windowHandle, int width, int height) {
-		Window& window = *reinterpret_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
+		WindowData& window = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(windowHandle));
 		glViewport(0, 0, width, height);
 		window.m_width = width;
 		window.m_height = height;
 	});
 	glfwSetKeyCallback(m_windowContext, [](GLFWwindow* windowHandle, int key, int scancode, int action, int mods) {
-		Window& window = *reinterpret_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
+		WindowData& window = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(windowHandle));
 		window.m_input.registerKeyEvent(key, action);
 	});
 	glfwSetMouseButtonCallback(m_windowContext, [](GLFWwindow* windowHandle, int button, int action, int mods) {
-		Window& window = *reinterpret_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
+		WindowData& window = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(windowHandle));
 		window.m_input.registerKeyEvent(button, action);
 	});
 	glfwSetCursorPosCallback(m_windowContext, [](GLFWwindow* windowHandle, double mouseX, double mouseY) {
-		Window& window = *reinterpret_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
+		WindowData& window = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(windowHandle));
 		window.m_input.setMousePersistentPosition(Vector2(mouseX, mouseY));
 	});
 
 	glfwShowWindow(m_windowContext);
 	glfwDefaultWindowHints();
 }
-Window::~Window() {
+WindowData::~WindowData() {
 	WR3CK_CLEANUP(m_windowContext, glfwDestroyWindow(m_windowContext))
 }
 
-const bool Window::isOpen() const {
+const GLuint WindowData::frameBuffer() const {
+	return 0;
+}
+
+const bool WindowData::isOpen() const {
 	return !glfwWindowShouldClose(m_windowContext);
 }
 
-void Window::setSwapInterval(const int interval) {
+void WindowData::setSwapInterval(const int interval) {
 	glfwMakeContextCurrent(m_windowContext);
 	glfwSwapInterval(interval);
 }
