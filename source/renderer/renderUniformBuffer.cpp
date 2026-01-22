@@ -13,34 +13,39 @@ void RenderUniformBuffer::bindAll(const ShaderData& shader) const {
 			continue;
 
 		const void* const data = it.second.data();
-		switch (it.second.glType()) {
-			case GL_INT:
+		switch (it.second.dataType()) {
+			case Internal::RenderData::DataType::Int:
 				glUniform1i(uniformData.m_location, *(int*)data);
 				break;
-			case GL_UNSIGNED_INT:
+			case Internal::RenderData::DataType::UnsignedInt:
 				glUniform1i(uniformData.m_location, *(unsigned int*)data);
 				break;
-			case GL_FLOAT:
+			case Internal::RenderData::DataType::Float:
 				glUniform1f(uniformData.m_location, *(float*)data);
 				break;
-			case GL_FLOAT_VEC2:
+			case Internal::RenderData::DataType::Vector2:
 				glUniform2f(uniformData.m_location, ((Vector2*)data)->x(), ((Vector2*)data)->y());
 				break;
-			case GL_FLOAT_VEC3:
+			case Internal::RenderData::DataType::Vector3:
 				glUniform3f(uniformData.m_location, ((Vector3*)data)->x(), ((Vector3*)data)->y(), ((Vector3*)data)->z());
 				break;
-			case GL_FLOAT_MAT4:
+			case Internal::RenderData::DataType::Mat4:
 				glUniformMatrix4fv(uniformData.m_location, 1, GL_FALSE, ((Matrix4*)data)->data());
 				break;
 
-			case GL_SAMPLER_2D: {
-				const TextureHandle* const textureHandle = reinterpret_cast<const TextureHandle*>(data);
-				const GLuint64 glTextureHandle = textureHandle->get().handle();
+			case Internal::RenderData::DataType::Texture: {
+				const TextureHandle& textureHandle = *reinterpret_cast<const TextureHandle*>(data);
+				const GLuint64 glTextureHandle = textureHandle.get().handle();
+				glUniformHandleui64ARB(uniformData.m_location, glTextureHandle);
+			} break;
+			case Internal::RenderData::DataType::RenderTexture: {
+				const RenderTextureHandle& renderTextureHandle = *reinterpret_cast<const RenderTextureHandle*>(data);
+				const GLuint64 glTextureHandle = renderTextureHandle.get().handle();
 				glUniformHandleui64ARB(uniformData.m_location, glTextureHandle);
 			} break;
 
 			default:
-				WR3CK_ERROR("Unsupported uniform type \"0x%x\".", it.second.glType());
+				WR3CK_ERROR("Unsupported RenderData uniform data type \"0x%x\".", it.second.dataType());
 				break;
 		}
 	}
