@@ -4,7 +4,7 @@
 namespace WR3CK
 {
 template<class T>
-template<typename... Args>
+template<typename... Args, typename _T, typename>
 Handle<T>::Handle(Args&&... args) :
 	m_referenceCount(new size_t(0)), m_data(new T(args...)) {
 	// TODO: Replace new allocator with some form of Arena perhaps?

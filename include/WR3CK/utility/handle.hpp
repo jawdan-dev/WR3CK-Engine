@@ -6,8 +6,10 @@ namespace WR3CK
 template<typename T>
 class Handle {
 public:
-	template<typename... Args>
+	template<typename... Args, typename _T = T, typename = std::enable_if_t<(!std::is_abstract_v<_T>)>>
 	Handle(Args&&... args);
+	template<typename _T = T, typename = std::enable_if_t<(std::is_abstract_v<_T>)>>
+	Handle() = delete;
 	Handle(Handle<T>& other);
 	Handle(const Handle<T>& other);
 	~Handle();
