@@ -3,6 +3,7 @@
 
 #include <WR3CK/asset/shader.hpp>
 #include <WR3CK/asset/mesh.hpp>
+#include <WR3CK/asset/frameBuffer.hpp>
 #include <WR3CK/renderer/renderUniformBuffer.hpp>
 #include <WR3CK/renderer/renderGroup.hpp>
 #include <WR3CK/renderer/staticRenderObject.hpp>
@@ -23,7 +24,8 @@ public:
 	void draw(const MeshHandle& meshHandle, const ShaderHandle& shaderHandle, const RenderInstance& instance, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
 	const StaticRenderObjectHandle draw(const MeshHandle& meshHandle, const ShaderHandle& shaderHandle, const StaticRenderInstance& instance, const RenderUniformBuffer& uniformBuffer = RenderUniformBuffer());
 	void draw(StaticRenderObjectHandle& staticRenderObjectHandle, const StaticRenderInstance& instance);
-	void render();
+	void render(FrameBufferHandle frameBufferHandle);
+	void render(FrameBufferData& frameBuffer);
 	void clear();
 
 private:

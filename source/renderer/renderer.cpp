@@ -30,8 +30,12 @@ void RendererData::draw(StaticRenderObjectHandle& staticRenderObjectHandle, cons
 	renderGroup.updateStaticInstance(staticRenderObject.staticKey(), instance);
 }
 
-void RendererData::render() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void RendererData::render(FrameBufferHandle frameBufferHandle) {
+	return render(frameBufferHandle.get());
+}
+void RendererData::render(FrameBufferData& frameBuffer) {
+	frameBuffer.clear();
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer.frameBuffer());
 
 	for (auto& shaderMeshIt : m_renderInstances) {
 		const ShaderHandle& shaderHandle = shaderMeshIt.first.first;
