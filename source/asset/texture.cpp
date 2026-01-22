@@ -5,7 +5,7 @@ namespace WR3CK
 TextureData::TextureData(const uint32_t width, const uint32_t height) :
 	m_data(nullptr),
 	m_width(0), m_height(0),
-	m_textureHandle(0), m_textureId(0),
+	m_textureId(0), m_textureHandle(0),
 	m_modified(false) {
 	resize(width, height);
 }
@@ -17,13 +17,13 @@ TextureData::~TextureData() {
 	m_modified = false;
 }
 
-const uint32_t TextureData::getPixel(const uint32_t x, const uint32_t y) const {
+const Color& TextureData::getPixel(const uint32_t x, const uint32_t y) const {
 	WR3CK_ASSERT(x < m_width, "X outside of texture dimensions.");
 	WR3CK_ASSERT(y < m_height, "Y outside of texture dimensions.");
 	return m_data[x + (y * m_width)];
 }
 
-void TextureData::setPixel(const uint32_t x, const uint32_t y, const uint32_t color) {
+void TextureData::setPixel(const uint32_t x, const uint32_t y, const Color& color) {
 	WR3CK_ASSERT(x < m_width, "X outside of texture dimensions.");
 	WR3CK_ASSERT(y < m_height, "Y outside of texture dimensions.");
 	m_data[x + (y * m_width)] = color;
@@ -44,7 +44,7 @@ void TextureData::resize(const uint32_t _width, const uint32_t _height) {
 	const uint32_t compatibleWidth = __min(width, m_width),
 				   compatibleHeight = __min(height, m_height);
 
-	uint32_t* const newData = new uint32_t[width * height](0);
+	Color* const newData = new Color[width * height](0);
 	for (uint32_t y = 0; y < compatibleHeight; y++) {
 		for (uint32_t x = 0; x < compatibleWidth; x++) {
 			newData[x + (y * width)] = m_data[x + (y * m_width)];
@@ -72,9 +72,9 @@ void TextureData::commit() {
 	if (m_textureId == 0) {
 		glGenTextures(1, &m_textureId);
 	}
-
+	// TODO: Subpixel update.
 	glBindTexture(GL_TEXTURE_2D, m_textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_FLOAT, m_data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

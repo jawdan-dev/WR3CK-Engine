@@ -5,5 +5,6 @@
 
 #include "vectorn.hpp"
 #include "matrix4.hpp"
+#include "color.hpp"
 
 #include "functions.hpp"
