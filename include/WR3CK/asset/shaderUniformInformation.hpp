@@ -1,5 +1,6 @@
 #pragma once
 #include <WR3CK/core/core.hpp>
+#include <WR3CK/core/opengl.hpp>
 
 namespace WR3CK::Internal
 {

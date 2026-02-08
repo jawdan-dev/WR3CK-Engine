@@ -1,5 +1,6 @@
 #pragma once
 #include <WR3CK/asset/assetHandle.hpp>
+#include <WR3CK/core/opengl.hpp>
 
 namespace WR3CK
 {

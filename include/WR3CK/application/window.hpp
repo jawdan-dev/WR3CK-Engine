@@ -1,5 +1,6 @@
 #pragma once
 #include <WR3CK/core/core.hpp>
+#include <WR3CK/core/opengl.hpp>
 
 #include <WR3CK/application/time.hpp>
 #include <WR3CK/application/input.hpp>
