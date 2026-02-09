@@ -12,25 +12,33 @@ public:
 	Handle() = delete;
 	Handle(Handle<T>& other);
 	Handle(const Handle<T>& other);
+	Handle(Handle<T>& other, const bool weak);
+	Handle(const Handle<T>& other, const bool weak);
 	~Handle();
 
-	WR3CK_GETTER_MUT(T&, get, *m_data);
+	T& get();
+	const T& get() const;
 	WR3CK_GETTER_CONST(size_t, referenceCount, *m_referenceCount);
+	WR3CK_GETTER_CONST(bool, hasData, *m_referenceCount > 0);
+	WR3CK_GETTER_CONST(bool, isStrong, m_referenced);
+	WR3CK_GETTER_CONST(bool, isWeak, !isStrong());
+
+	void makeStrong();
+	void makeWeak();
 
 	template<typename C, typename = std::enable_if_t<std::is_base_of_v<C, T>>>
 	operator Handle<C>();
 	template<typename C, typename = std::enable_if_t<std::is_base_of_v<C, T>>>
 	operator Handle<C>() const;
+	operator bool() const;
 	Handle<T>& operator=(const Handle<T>& other);
 	const bool operator==(const Handle<T>& other) const;
 	const bool operator<(const Handle<T>& other) const;
 
 private:
-	void referenceIncrement();
-	void referenceDecrement();
-
 	size_t* m_referenceCount;
 	T* m_data;
+	bool m_referenced;
 };
 }
 
