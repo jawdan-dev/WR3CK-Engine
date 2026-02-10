@@ -7,6 +7,7 @@ namespace WR3CK
 class TextureData : public AssetBaseData {
 public:
 	TextureData(const uint32_t width, const uint32_t height);
+	TextureData(const uint32_t width, const uint32_t height, const uint8_t* const data, const uint8_t channels = 4);
 	TextureData(const TextureData& other) = delete;
 	~TextureData();
 

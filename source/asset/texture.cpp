@@ -9,6 +9,24 @@ TextureData::TextureData(const uint32_t width, const uint32_t height) :
 	m_modified(false) {
 	resize(width, height);
 }
+TextureData::TextureData(const uint32_t width, const uint32_t height, const uint8_t* const data, const uint8_t channels) :
+	TextureData(width, height) {
+	WR3CK_ASSERT(data != nullptr);
+	for (size_t y = 0; y < m_height; y++) {
+		for (size_t x = 0; x < m_width; x++) {
+			const uint8_t* const pixel = &data[(x + (y * m_width)) * channels];
+			switch (channels) {
+				default: WR3CK_ASSERT(false); break;
+				case 1: m_data[x + (y * m_width)] = Color(pixel[0], pixel[0], pixel[0]); break;
+				case 2: m_data[x + (y * m_width)] = Color(pixel[0], pixel[0], pixel[0], pixel[1]); break;
+				case 3: m_data[x + (y * m_width)] = Color(pixel[0], pixel[1], pixel[2]); break;
+				case 4: m_data[x + (y * m_width)] = Color(pixel[0], pixel[1], pixel[2], pixel[3]); break;
+			}
+		}
+	}
+	m_modified = m_modified || (m_width > 0 && m_height > 0);
+	commit();
+}
 TextureData::~TextureData() {
 	WR3CK_CLEANUP(m_data, delete[] m_data);
 	WR3CK_CLEANUP_GL(m_textureId, glDeleteTextures(1, &m_textureId); m_textureHandle = 0);
