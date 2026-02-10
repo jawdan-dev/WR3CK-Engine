@@ -72,6 +72,18 @@ void Handle<T>::makeWeak() {
 	WR3CK_CLEANUP(m_referenceCount, delete m_referenceCount);
 	WR3CK_CLEANUP(m_data, delete m_data);
 }
+template<class T>
+template<typename _T, typename>
+void Handle<T>::makeUnique() {
+	size_t* newReferenceCount = new size_t(0);
+	T* newData = new T(*this);
+	makeWeak();
+
+	m_data = newData;
+	m_referenceCount = newReferenceCount;
+	m_referenced = false;
+	makeStrong();
+}
 
 template<class T>
 template<typename C, typename>

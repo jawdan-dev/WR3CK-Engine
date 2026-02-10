@@ -25,6 +25,8 @@ public:
 
 	void makeStrong();
 	void makeWeak();
+	template<typename _T = T, typename = std::enable_if_t<(std::is_copy_constructible_v<_T>)>>
+	void makeUnique();
 
 	template<typename C, typename = std::enable_if_t<std::is_base_of_v<C, T>>>
 	operator Handle<C>();
