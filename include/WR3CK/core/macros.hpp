@@ -26,7 +26,11 @@
 	}
 
 // TODO: Colored print functions.
-#define WR3CK_DEBUG			   printf("DEBUG @ " __FILE__ ":" STRINGIFY(__LINE__) "\n");
+#define WR3CK_DEBUG                                               \
+	{                                                             \
+		printf("DEBUG @ " __FILE__ ":" STRINGIFY(__LINE__) "\n"); \
+		fflush(stdout);                                           \
+	}
 #define WR3CK_PRINT(...)	   printf(__VA_ARGS__)
 #define WR3CK_LOG(...)		   WR3CK_PRINT(__VA_ARGS__)
 #define WR3CK_LOG_WARNING(...) WR3CK_PRINT(__VA_ARGS__)
