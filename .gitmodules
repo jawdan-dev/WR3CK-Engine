@@ -6,7 +6,7 @@
 	url = https://github.com/Perlmint/glew-cmake
 [submodule "vendor/zlib"]
 	path = vendor/zlib
-	url = https://github.com/madler/zlib/
-[submodule ".\\vendor\\stb"]
-	path = .\\vendor\\stb
-	url = https://github.com/nothings/stb.git
+	url = https://github.com/madler/zlib
+[submodule "vendor/stb"]
+	path = vendor/stb
+	url = https://github.com/nothings/stb
