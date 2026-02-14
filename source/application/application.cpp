@@ -43,6 +43,7 @@ void Application::start() {
 		// Process.
 		for (size_t i = 0; i < m_windowHandles.size(); i++) {
 			WindowData& window = m_windowHandles[i].get();
+			glFinish();
 			glfwMakeContextCurrent(window.context());
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			window.process();
