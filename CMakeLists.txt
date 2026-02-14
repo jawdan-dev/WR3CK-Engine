@@ -37,3 +37,13 @@ set(ONLY_LIBS ON)
 check_and_add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/vendor/glew)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glew/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE libglew_static)
+
+# zlib.
+check_and_add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/vendor/zlib)
+target_link_libraries(${PROJECT_NAME} PRIVATE zlibstatic)
+
+# Asset Packager.
+if(DEFINED wr3ck-assets)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/internal/asset-packager)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${wr3ck-assets-lib})
+endif()
