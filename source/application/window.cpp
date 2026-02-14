@@ -2,6 +2,8 @@
 
 namespace WR3CK
 {
+std::set<GLFWwindow*> s_contextShareParents;
+
 WindowData::WindowData() : WindowData(CreationConfig()) {}
 WindowData::WindowData(const CreationConfig& config) :
 	m_windowContext(nullptr),
@@ -17,8 +19,13 @@ WindowData::WindowData(const CreationConfig& config) :
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-	m_windowContext = glfwCreateWindow(config.m_width, config.m_height, config.m_title.c_str(), NULL, NULL);
+	GLFWwindow* contextShareParent = nullptr;
+	if (!s_contextShareParents.empty())
+		contextShareParent = *s_contextShareParents.begin();
+
+	m_windowContext = glfwCreateWindow(config.m_width, config.m_height, config.m_title.c_str(), NULL, contextShareParent);
 	WR3CK_ASSERT(m_windowContext != nullptr, "Failed to initialize GLFW window context.");
+	s_contextShareParents.emplace(m_windowContext);
 
 	m_width = config.m_width;
 	m_height = config.m_width;
@@ -59,6 +66,8 @@ WindowData::WindowData(const CreationConfig& config) :
 	glfwDefaultWindowHints();
 }
 WindowData::~WindowData() {
+	s_contextShareParents.erase(m_windowContext);
+
 	WR3CK_CLEANUP(m_windowContext, glfwDestroyWindow(m_windowContext));
 	m_width = 0;
 	m_height = 0;
