@@ -3,6 +3,11 @@
 ## About
 A simple low-level engine for making games!
 
+## Games Made with WR3CK Engine!
+- [SYSTEM WR3CK](https://jawdandev.itch.io/system-wr3ck)
+- [Goblin Hero](https://jawdandev.itch.io/goblin-hero)
+- [Baby Sumo](https://hjmw.itch.io/baby-sumo)
+
 ## Licensing and Use
 This project, the `WR3CK Engine`, is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
