@@ -28,7 +28,7 @@ AssetLoader AssetLoader::s_instance;
 		free(rawData);                                                                                                    \
 		return name##Handle(handle);                                                                                      \
 	}
-AssetLoaderFunction(Plaintext, &data.m_data);
+AssetLoaderFunction(Plaintext, &data.m_data, s_instance.m_fileInformation.find(path)->second.m_info->m_dataSizeUncompressed);
 AssetLoaderFunction(Shader, &data.m_data);
 AssetLoaderFunction(Texture, data.m_width, data.m_height, &data.m_data, data.m_channels);
 
