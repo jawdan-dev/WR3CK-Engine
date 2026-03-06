@@ -19,8 +19,10 @@ RenderGroupData::~RenderGroupData() {
 
 void RenderGroupData::addInstance(const RenderInstance& instanceData) {
 	const ShaderData& shader = m_shaderHandle.get();
-	if (shader.attributeInstanceTotalSize() <= 0)
+	if (shader.attributeInstanceTotalSize() <= 0) {
+		m_instanceCount = 1;
 		return;
+	}
 
 	void* const data = insertInstance(m_instanceCount);
 	const auto& attributes = shader.attributes();
