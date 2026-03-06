@@ -35,11 +35,11 @@ AssetLoaderFunction(Texture, data.m_width, data.m_height, &data.m_data, data.m_c
 AssetLoader::AssetLoader() :
 	m_fileInformation(),
 	m_loadedPlaintext(), m_loadedTexture(), m_loadedShader() {
-	const void* fileStart = reinterpret_cast<void*>(&_binary_assets_pck_start);
+	const uintptr_t fileStart = reinterpret_cast<uintptr_t>(&_binary_assets_pck_start);
 	const Internal::AssetPackage::Header& header = *reinterpret_cast<const Internal::AssetPackage::Header*>(fileStart);
 	WR3CK_ASSERT(header.m_signature == Internal::AssetPackage::Constants::fileSignature, "Failed to match asset package signature.");
 
-	const void* file = fileStart + header.m_infoStart;
+	uintptr_t file = fileStart + header.m_infoStart;
 	for (uint32_t i = 0; i < header.m_fileCount; i++) {
 		const Internal::AssetPackage::Info& info = *reinterpret_cast<const Internal::AssetPackage::Info*>(file);
 		file += sizeof(info);
@@ -47,7 +47,7 @@ AssetLoader::AssetLoader() :
 		const char* const name = reinterpret_cast<const char*>(fileStart + info.m_nameStart);
 		FileInformation fileInformation;
 		fileInformation.m_info = &info;
-		fileInformation.m_data = fileStart + info.m_dataStart;
+		fileInformation.m_data = reinterpret_cast<const void*>(fileStart + info.m_dataStart);
 		m_fileInformation.emplace(name, fileInformation);
 	}
 }
