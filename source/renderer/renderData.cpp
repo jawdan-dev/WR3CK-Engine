@@ -16,7 +16,7 @@
 	x(ARG(Math::Matrix<4, 4>), GL_FLOAT_MAT4, Mat4)     \
 	x(ARG(Math::Matrix<4, 2>), GL_FLOAT_MAT4x2, Mat4x2) \
 	x(double, GL_DOUBLE, Double)                        \
-	x(TextureHandle, GL_SAMPLER_2D, Texture)            \
+	x(TextureHandle, GL_SAMPLER_2D, Texture)           	\
 	x(RenderTextureHandle, GL_SAMPLER_2D, RenderTexture)
 
 namespace WR3CK::Internal
@@ -93,7 +93,7 @@ const size_t RenderData::dataSize() const {
 		default:
 			WR3CK_ERROR("Unsupported RenderData type \"%x\".", m_dataType);
 			break;
-#define RENDERDATA_SIZEOF(type, glType, enum) \
+#define RENDERDATA_SIZEOF(type, glType, enum)               \
 	case DataType::enum: return sizeof(type) * m_dataCount;
 			RENDERDATA_MAP(RENDERDATA_SIZEOF)
 #undef RENDERDATA_SIZEOF
@@ -141,7 +141,7 @@ const bool RenderData::operator==(const RenderData& other) const {
 
 	// TODO: Array check....
 	switch (m_dataType) {
-#define RENDERDATA_COMPARE(type, glType, enum) \
+#define RENDERDATA_COMPARE(type, glType, enum)                                                                          \
 	case DataType::enum: return *reinterpret_cast<const type*>(data()) == *reinterpret_cast<const type*>(other.data());
 		RENDERDATA_MAP(RENDERDATA_COMPARE);
 #undef RENDERDATA_COMPARE
@@ -155,7 +155,7 @@ const bool RenderData::operator<(const RenderData& other) const {
 		return m_dataType < other.m_dataType;
 
 	switch (m_dataType) {
-#define RENDERDATA_COMPARE(type, glType, enum) \
+#define RENDERDATA_COMPARE(type, glType, enum)                                                                         \
 	case DataType::enum: return *reinterpret_cast<const type*>(data()) < *reinterpret_cast<const type*>(other.data());
 		RENDERDATA_MAP(RENDERDATA_COMPARE);
 #undef RENDERDATA_COMPARE

@@ -18,7 +18,6 @@ public:
 	Matrix(const Matrix& other) = default;
 	~Matrix() = default;
 
-
 	float* const data() { return (float*)m_data; }
 	const float* const data() const { return (float*)m_data; }
 	inline const size_t width() const { return t_width; };
